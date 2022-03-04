@@ -2,22 +2,18 @@ import './style.css';
 import ProjectController from './projectController';
 import Project from './project';
 import Todo from './todo';
+import { toggleProjectForm, toggleTodoForm, closeForm, closeTodo } from './formController';
 
-// projectComponent();
-const toggleProjectFormBtn = document.querySelector('.add-project-btn');
 const addProjectBtn = document.querySelector('.project-input-field > .btn.add');
-const closeProjectBtn = document.querySelector('.project-input-field > .btn.close');
-const closeTodoBtn = document.querySelector('.btn-container > .btn.close');
 const projectsList = document.querySelector('.projects');
-const toggleTodoFormBtn = document.querySelector('.add-todo-btn');
 const todoForm = document.querySelector('.todo_form');
 
 const projectController = new ProjectController(projectsList);
 const p1 = new Project('test project');
 const todo1 = new Todo('todo1', 'todo1', '3/3/2022', 'red');
-const todo2 = new Todo('todo1', 'todo1', '3/3/2022', 'green');
-const todo3 = new Todo('todo1', 'todo1', '3/3/2022', 'yellow');
-const todo4 = new Todo('todo1', 'todo1', '3/3/2022', 'red');
+const todo2 = new Todo('todo2', 'todo2', '3/3/2022', 'green');
+const todo3 = new Todo('todo3', 'todo3', '3/3/2022', 'yellow');
+const todo4 = new Todo('todo4', 'todo4', '3/3/2022', 'red');
 p1.addTodo(todo1);
 p1.addTodo(todo2);
 p1.addTodo(todo3);
@@ -25,21 +21,7 @@ p1.addTodo(todo4);
 projectController.addProject(p1);
 projectController.populate();
 
-const toggleProjectForm = function () {
-    const form = document.querySelector('.project-input-field');
-    form.classList.toggle('active');
-    toggleProjectFormBtn.style.display = 'none';
-}
-const toggleTodoForm = function () {
-    const form = document.querySelector('.todo_form');
-    form.classList.toggle('active');
-    toggleTodoFormBtn.style.display = 'none';
-}
-const closeForm = function () {
-    const form = document.querySelector('.project-input-field');
-    form.classList.toggle('active');
-    toggleProjectFormBtn.style.display = 'block';
-}
+
 const addProject = function () {
     const inputForm = document.querySelector('#project_name');
     if (inputForm.value) {
@@ -54,12 +36,7 @@ const addProject = function () {
         alert("project name can't be blank")
     }
 }
-const closeTodo = function () {
-    const form = document.querySelector('.todo_form');
-    form.classList.toggle('active');
-    toggleTodoFormBtn.style.display = 'block';
-    todoForm.reset();
-}
+
 const addTodo = function (e) {
     e.preventDefault();
     const title = document.querySelector('#title');
@@ -100,6 +77,7 @@ const displayProject = function () {
     activeProject.classList.remove('active');
     this.classList.add('active');
     project.display();
+    insertTodoEventListener();
 }
 const insertProjectEventListener = () => {
     const allprojects = document.querySelectorAll('.project');
@@ -134,11 +112,10 @@ const insertTodoEventListener = () => {
         icon.addEventListener('click', removeTodo);
     })
 }
-toggleProjectFormBtn.addEventListener("click", toggleProjectForm);
+
 addProjectBtn.addEventListener("click", addProject);
-closeProjectBtn.addEventListener("click", closeForm);
-toggleTodoFormBtn.addEventListener('click', toggleTodoForm)
 todoForm.addEventListener("submit", addTodo);
-closeTodoBtn.addEventListener("click", closeTodo);
+// closeProjectBtn.addEventListener("click", closeForm);
+// closeTodoBtn.addEventListener("click", closeTodo);
 
 insertProjectEventListener();
