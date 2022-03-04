@@ -1,44 +1,52 @@
 import './style.css';
-import ProjectManager from './project_manager';
+import ProjectController from './projectController';
 import Project from './project';
 import Todo from './todo';
 
 // projectComponent();
-
-const toggleFormBtn = document.querySelector('.add-project-btn');
-const addProjectBtn = document.querySelector('.btn.add');
-const closeProjectBtn = document.querySelector('.btn.close');
-const inputForm = document.querySelector('#project_name');
-const projects = document.querySelector('.projects');
-const form = document.querySelector('.project-input-field');
-const mainContent = document.querySelector('.main-content');
+const toggleProjectFormBtn = document.querySelector('.add-project-btn');
+const addProjectBtn = document.querySelector('.project-input-field > .btn.add');
+const closeProjectBtn = document.querySelector('.project-input-field > .btn.close');
+const closeTodoBtn = document.querySelector('.btn-container > .btn.close');
 const projectsList = document.querySelector('.projects');
+const toggleTodoFormBtn = document.querySelector('.add-todo-btn');
+const todoForm = document.querySelector('.todo_form');
 
-//test data
-const projectManager = new ProjectManager(projectsList);
-// const p1 = new Project("p1");
-// const td1 = new Todo("td1", "td1", "2022-12-31", "medium");
-// p1.addTodo(td1);
+const projectController = new ProjectController(projectsList);
+const p1 = new Project('test project');
+const todo1 = new Todo('todo1', 'todo1', '3/3/2022', 'red');
+const todo2 = new Todo('todo1', 'todo1', '3/3/2022', 'green');
+const todo3 = new Todo('todo1', 'todo1', '3/3/2022', 'yellow');
+const todo4 = new Todo('todo1', 'todo1', '3/3/2022', 'red');
+p1.addTodo(todo1);
+p1.addTodo(todo2);
+p1.addTodo(todo3);
+p1.addTodo(todo4);
+projectController.addProject(p1);
+projectController.populate();
 
-// projectManager.addProject(p1);
-// projectManager.populate();
-
-
-const toggleForm = function () {
+const toggleProjectForm = function () {
+    const form = document.querySelector('.project-input-field');
     form.classList.toggle('active');
-    toggleFormBtn.style.display = 'none';
+    toggleProjectFormBtn.style.display = 'none';
+}
+const toggleTodoForm = function () {
+    const form = document.querySelector('.todo_form');
+    form.classList.toggle('active');
+    toggleTodoFormBtn.style.display = 'none';
 }
 const closeForm = function () {
+    const form = document.querySelector('.project-input-field');
     form.classList.toggle('active');
-    toggleFormBtn.style.display = 'block';
+    toggleProjectFormBtn.style.display = 'block';
 }
 const addProject = function () {
+    const inputForm = document.querySelector('#project_name');
     if (inputForm.value) {
-
         const newProject = new Project(inputForm.value);
-        projectManager.addProject(newProject);
+        projectController.addProject(newProject);
         newProject.display();
-        projectManager.populate();
+        projectController.populate();
         inputForm.value = '';
         insertProjectEventListener();
         closeForm();
@@ -46,51 +54,91 @@ const addProject = function () {
         alert("project name can't be blank")
     }
 }
-const displayNextAvailableProject = function (e) {
-    if (e.target.parentNode.nextSibling) {
-        const project = projectManager.projects[e.target.parentNode.nextSibling.dataset.index];
-        project.display();
-    }
-    else if (e.target.parentNode.previousSibling) {
-        const project = projectManager.projects[e.target.parentNode.previousSibling.dataset.index];
-        project.display();
-    }
-    else {
-        const todoWrapper = document.querySelector('.todo-wrapper');
-        todoWrapper.parentNode.removeChild(todoWrapper);
-    }
+const closeTodo = function () {
+    const form = document.querySelector('.todo_form');
+    form.classList.toggle('active');
+    toggleTodoFormBtn.style.display = 'block';
+    todoForm.reset();
+}
+const addTodo = function (e) {
+    e.preventDefault();
+    const title = document.querySelector('#title');
+    const desc = document.querySelector('#desc');
+    const date = document.querySelector('#date');
+    const prioritySelector = document.querySelectorAll("[type='radio']");
+    let priority;
+    prioritySelector.forEach(p => {
+        if (p.checked)
+            priority = p.value;
+    })
+    const newTodo = new Todo(title.value, desc.value, date.value, priority);
+    const currentActiveProject = document.querySelector('.project.active');
+    const project = projectController.projects[currentActiveProject.dataset.index];
+    project.addTodo(newTodo);
+    project.display();
+    closeTodo();
+    insertTodoEventListener();
+
 }
 const removeProject = function (e) {
     e.stopPropagation();
     // displayNextAvailableProject(e);
     e.target.parentNode.remove();
-    projectManager.removeProject(this.parentNode.dataset.index);
-    if (!projectManager.projects.length) {
+    projectController.removeProject(this.parentNode.dataset.index);
+    if (!projectController.projects.length) {
         const todoWrapper = document.querySelector('.todo-wrapper');
         todoWrapper.parentNode.removeChild(todoWrapper);
         return;
     }
-    projectManager.populate();
+    projectController.populate();
     insertProjectEventListener();
 
 }
-const displayProject = function (e) {
-    const project = projectManager.projects[this.dataset.index];
+const displayProject = function () {
+    const project = projectController.projects[this.dataset.index];
+    const activeProject = document.querySelector('.project.active');
+    activeProject.classList.remove('active');
+    this.classList.add('active');
     project.display();
 }
 const insertProjectEventListener = () => {
     const allprojects = document.querySelectorAll('.project');
     allprojects.forEach(p => {
-        p.addEventListener('click', displayProject)
+        p.addEventListener('click', displayProject);
     })
-    const removeIcons = document.querySelectorAll('.fa-solid.fa-xmark');
+    const removeIcons = document.querySelectorAll('.project > .fa-solid.fa-xmark');
     removeIcons.forEach(icon => {
         icon.addEventListener('click', removeProject);
     })
+    insertTodoEventListener();
 }
-
-
-toggleFormBtn.addEventListener("click", toggleForm);
+const removeTodo = function (e) {
+    e.stopPropagation();
+    const currentActiveProject = document.querySelector('.project.active');
+    const project = projectController.projects[currentActiveProject.dataset.index];
+    project.removeTodo(e.target.parentNode.dataset.index);
+    e.target.parentNode.remove();
+    project.display();
+    insertTodoEventListener();
+}
+const selectTodo = function (e) {
+    // console.log(this);
+}
+const insertTodoEventListener = () => {
+    const allTodos = document.querySelectorAll('.todo');
+    allTodos.forEach((td) => {
+        td.addEventListener('click', selectTodo)
+    })
+    const removeIcons = document.querySelectorAll('.todo > .fa-solid.fa-xmark');
+    removeIcons.forEach(icon => {
+        icon.addEventListener('click', removeTodo);
+    })
+}
+toggleProjectFormBtn.addEventListener("click", toggleProjectForm);
 addProjectBtn.addEventListener("click", addProject);
 closeProjectBtn.addEventListener("click", closeForm);
+toggleTodoFormBtn.addEventListener('click', toggleTodoForm)
+todoForm.addEventListener("submit", addTodo);
+closeTodoBtn.addEventListener("click", closeTodo);
 
+insertProjectEventListener();
