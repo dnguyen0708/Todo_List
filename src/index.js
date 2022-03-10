@@ -33,17 +33,26 @@ const addProject = function () {
         inputForm.value = '';
         insertProjectEventListener();
         closeForm();
+        addTodoBtnToggle();
     } else {
         alert("project name can't be blank")
     }
 }
-
+const addTodoBtnToggle = function () {
+    const toggleTodoFormBtn = document.querySelector('.add-todo-btn.btn');
+    console.log(projectController.projects.length);
+    if (projectController.projects.length === 0) {
+        toggleTodoFormBtn.style.display = 'none';
+    } else {
+        toggleTodoFormBtn.style.display = 'block';
+    }
+}
 const addTodo = function (e) {
     e.preventDefault();
     const title = document.querySelector('#title');
     const desc = document.querySelector('#desc');
     const date = document.querySelector('#date');
-    const prioritySelector = document.querySelectorAll("[type='radio']");
+    const prioritySelector = document.querySelectorAll(".todo_form [type='radio']");
     let priority;
     prioritySelector.forEach(p => {
         if (p.checked) {
@@ -61,17 +70,16 @@ const addTodo = function (e) {
 }
 const removeProject = function (e) {
     e.stopPropagation();
-    // displayNextAvailableProject(e);
     e.target.parentNode.remove();
     projectController.removeProject(this.parentNode.dataset.index);
     if (!projectController.projects.length) {
         const todoWrapper = document.querySelector('.todo-wrapper');
         todoWrapper.parentNode.removeChild(todoWrapper);
+        addTodoBtnToggle();
         return;
     }
     projectController.populate();
     insertProjectEventListener();
-
 }
 const displayProject = function () {
     const project = projectController.projects[this.dataset.index];
@@ -154,7 +162,6 @@ const updateTodo = function (e) {
         }
     });
     parentNode.removeChild(form);
-    // revealAllTodos();
     currentProject.display();
     insertTodoEventListener();
 }
