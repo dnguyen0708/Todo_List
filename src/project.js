@@ -38,7 +38,7 @@ class Project {
         return todoContainer;
     }
 
-    display() {
+    static display(p) {
         const mainContent = document.querySelector(".main-content");
         if (mainContent.firstChild) {
             mainContent.removeChild(mainContent.firstChild);
@@ -51,31 +51,38 @@ class Project {
             todoContent.className = "todo-content";
             todoWrapper.className = "todo-wrapper";
 
-            projectTitle.textContent = this.name;
+            projectTitle.textContent = p.name;
             todoWrapper.append(projectTitle, todoContent);
             mainContent.appendChild(todoWrapper);
-            this.populate();
+            Project.populate(p);
         }
     }
 
-    populate() {
+    static populate(p) {
         //reset list
         const todoContent = document.querySelector('.todo-content');
         while (todoContent.firstChild) {
             todoContent.removeChild(todoContent.firstChild);
         }
 
-        this.todo.forEach((td, index) => {
-            todoContent.append(Project.createTodo(td, index));
-        });
+        if (p.todo) {
+            p.todo.forEach((td, index) => {
+                todoContent.append(Project.createTodo(td, index));
+            });
+        }
+
     }
 
-    addTodo(todo) {
-        this.todo.push(todo);
+    static addTodo(p, todo) {
+        p.todo.push(todo);
+        const addToLocalStorage = JSON.stringify(p.todo);
+        localStorage.setItem("projects", addToLocalStorage);
     }
 
-    removeTodo(index) {
-        this.todo.splice(index, 1);
+    static removeTodo(p, index) {
+        p.todo.splice(index, 1);
+        const addToLocalStorage = JSON.stringify(p.todo);
+        localStorage.setItem("projects", addToLocalStorage);
     }
 }
 

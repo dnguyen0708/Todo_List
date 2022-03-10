@@ -1,7 +1,8 @@
+import Project from "./project";
 class ProjectController {
     constructor(element) {
         this.element = element;
-        this.projects = [];
+        this.projects = JSON.parse(localStorage.getItem("projects"));
     }
 
 
@@ -34,23 +35,35 @@ class ProjectController {
         }
 
         //populate ul
-        this.projects.forEach((p, i) => {
-            if (i === this.projects.length - 1) {
-                this.element.append(ProjectController.createItem(p.name, i, true));
-                p.display();
-            } else {
-                this.element.append(ProjectController.createItem(p.name, i));
-            }
+        if (this.projects) {
+            this.projects.forEach((p, i) => {
+                if (i === this.projects.length - 1) {
+                    this.element.append(ProjectController.createItem(p.name, i, true));
+                    Project.display(p);
+                } else {
+                    this.element.append(ProjectController.createItem(p.name, i));
+                }
 
-        })
+            })
+        }
+
     }
 
     addProject(p) {
         this.projects.push(p);
+        const addToLocalStorage = JSON.stringify(this.projects);
+        localStorage.setItem("projects", addToLocalStorage);
     }
 
     removeProject(index) {
         this.projects.splice(index, 1);
+        const addToLocalStorage = JSON.stringify(this.projects);
+        localStorage.setItem("projects", addToLocalStorage);
+    }
+
+    update() {
+        const addToLocalStorage = JSON.stringify(this.projects);
+        localStorage.setItem("projects", addToLocalStorage);
     }
 }
 export default ProjectController;
