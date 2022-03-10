@@ -6,6 +6,16 @@ class Todo {
         this.priority = priority;
     }
 
+    get info() {
+        return [this.title, this.desc, this.dueDate, this.priority];
+    }
+
+    updateTodo(title, desc, date, pri) {
+        this.title = title;
+        this.desc = desc;
+        this.dueDate = date;
+        this.priority = pri;
+    }
 }
 
 export default Todo;

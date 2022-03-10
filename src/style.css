@@ -84,27 +84,51 @@ ul {
     margin-bottom: 5px;
     padding: 12px;
     border-radius: 1rem;
+    
 }
-.todo .fa-solid.fa-xmark{
+.todo .edit-delete-todo{
+    display: none;
     position: absolute;
     right:10px;
-    top: 10px;;
+    top: 30px;
+    background-color: var(--side-bg-color);
+    padding: 6px;
+    border-radius: .5rem;
+    cursor: pointer;
+    overflow:hidden;
 }
-.todo_form{
+.todo .edit-delete-todo.active{
+    display: block;
+
+}
+.todo .deleteTodo:hover,.editTodo:hover{
+    color:blue;
+}
+.todo .fa-solid.fa-ellipsis{
+    position: absolute;
+    right:10px;
+    top: 10px;
+}
+.todo_form,.edit_form{
     display: none;
     flex-direction: column;
     min-height: 20%;
     background-color: var(--side-bg-color);
     padding:12px;
     gap:12px;
- 
     border-radius: 1rem;
+    margin: 7px;
+}
+.edit_form{
+    display: flex;
 }
 .todo_form.active{
     display: flex;
 }
 .priority-title{
-    display: inline-block;
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 10px;
 }
 .main-content-wrapper .add-todo-btn{
     width: 10%;
@@ -173,8 +197,9 @@ ul {
 label{
     font-size: 20px;
     font-weight: 500;
+    margin-right: 12px;
 }
 .btn.close{
     background-color: red;
-    
+    margin-left: 12px;
 }
