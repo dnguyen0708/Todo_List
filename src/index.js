@@ -40,7 +40,6 @@ const addProject = function () {
 }
 const addTodoBtnToggle = function () {
     const toggleTodoFormBtn = document.querySelector('.add-todo-btn.btn');
-    console.log(projectController.projects.length);
     if (projectController.projects.length === 0) {
         toggleTodoFormBtn.style.display = 'none';
     } else {
