@@ -4,7 +4,10 @@
     box-sizing: border-box;
     /* border:1px solid black; */
 }
-
+a, a:hover, a:focus, a:active {
+    text-decoration: none;
+    color: inherit;
+}
 :root{
     font-family: 'Roboto', sans-serif;
     --header-height: 100px;
@@ -201,5 +204,9 @@ label{
 }
 .btn.close{
     background-color: red;
+    margin-left: 12px;
+}
+.fa-brands.fa-github{
+    font-size: 32px;
     margin-left: 12px;
 }
