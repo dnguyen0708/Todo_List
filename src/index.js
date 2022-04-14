@@ -35,10 +35,11 @@ const addProject = function () {
 }
 const addTodoBtnToggle = function () {
     const toggleTodoFormBtn = document.querySelector('.add-todo-btn.btn');
-    if (projectController.projects) {
-        toggleTodoFormBtn.style.display = 'block';
-    } else {
+  
+    if (projectController.projects.length) {
         toggleTodoFormBtn.style.display = 'none';
+    } else {
+        toggleTodoFormBtn.style.display = 'block';
     }
 }
 addTodoBtnToggle();
@@ -182,7 +183,7 @@ const editTodos = function () {
 
     const addBtn = document.querySelector('.edit_form .btn.add');
     const closeBtn = document.querySelector('.edit_form .btn.close');
-    closeBtn.addEventListener('click', function (e) {
+    closeBtn.addEventListener('click', function () {
         editTodoForm.reset();
         parentNode.removeChild(editTodoForm)
         revealAllTodos();
