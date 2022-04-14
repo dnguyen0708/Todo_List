@@ -4,31 +4,26 @@ import Project from './project';
 import Todo from './todo';
 import { closeForm, closeTodo } from './formController';
 import Form from './form';
+import initialization from './init';
 
 const addProjectBtn = document.querySelector('.project-input-field > .btn.add');
 const projectsList = document.querySelector('.projects');
 const projectController = new ProjectController(projectsList);
 const todoForm = document.querySelector('.todo_form');
 
-const p1 = new Project('test project');
-const todo1 = new Todo('todo1', 'todo1', '2022-03-09', 'red');
-const todo2 = new Todo('todo2', 'todo2', '2022-03-09', 'green');
-const todo3 = new Todo('todo3', 'todo3', '2022-03-09', 'yellow');
-const todo4 = new Todo('todo4', 'todo4', '2022-03-09', 'red');
-p1.addTodo(todo1);
-p1.addTodo(todo2);
-p1.addTodo(todo3);
-p1.addTodo(todo4);
-projectController.addProject(p1);
+if (Object.keys(localStorage).length === 0) {
+    initialization();
+    console.log(localStorage);
+}
+// console.log(localStorage);
 projectController.populate();
-
 
 const addProject = function () {
     const inputForm = document.querySelector('#project_name');
     if (inputForm.value) {
         const newProject = new Project(inputForm.value);
         projectController.addProject(newProject);
-        newProject.display();
+        Project.display(newProject);
         projectController.populate();
         inputForm.value = '';
         insertProjectEventListener();
@@ -40,12 +35,17 @@ const addProject = function () {
 }
 const addTodoBtnToggle = function () {
     const toggleTodoFormBtn = document.querySelector('.add-todo-btn.btn');
-    if (projectController.projects.length === 0) {
+    if (projectController.projects.length) {
         toggleTodoFormBtn.style.display = 'none';
     } else {
-        toggleTodoFormBtn.style.display = 'block';
+        if (projectController.projects) {
+            toggleTodoFormBtn.style.display = 'block';
+        } else {
+            toggleTodoFormBtn.style.display = 'none';
+        }
     }
 }
+addTodoBtnToggle();
 const addTodo = function (e) {
     e.preventDefault();
     const title = document.querySelector('#title');
@@ -62,8 +62,10 @@ const addTodo = function (e) {
     const newTodo = new Todo(title.value, desc.value, date.value, priority);
     const currentActiveProject = document.querySelector('.project.active');
     const project = projectController.projects[currentActiveProject.dataset.index];
-    project.addTodo(newTodo);
-    project.display();
+    Project.addTodo(project, newTodo);
+    Project.display(project);
+    projectController.update();
+    // console.log(localStorage);
     closeTodo();
     insertTodoEventListener();
 }
@@ -77,6 +79,7 @@ const removeProject = function (e) {
         addTodoBtnToggle();
         return;
     }
+    projectController.update();
     projectController.populate();
     insertProjectEventListener();
 }
@@ -85,7 +88,7 @@ const displayProject = function () {
     const activeProject = document.querySelector('.project.active');
     activeProject.classList.remove('active');
     this.classList.add('active');
-    project.display();
+    Project.display(project);
     insertTodoEventListener();
 }
 const insertProjectEventListener = () => {
@@ -103,9 +106,11 @@ const removeTodo = function (e) {
     e.stopPropagation();
     const currentActiveProject = document.querySelector('.project.active');
     const project = projectController.projects[currentActiveProject.dataset.index];
-    project.removeTodo(e.target.parentNode.parentNode.dataset.index);
+    // project.removeTodo(e.target.parentNode.parentNode.dataset.index);
+    Project.removeTodo(project, e.target.parentNode.parentNode.dataset.index)
     e.target.parentNode.remove();
-    project.display();
+    projectController.update();
+    Project.display(project);
     insertTodoEventListener();
 }
 const toggleEditAndDel = function (e) {
@@ -161,7 +166,8 @@ const updateTodo = function (e) {
         }
     });
     parentNode.removeChild(form);
-    currentProject.display();
+    projectController.update();
+    Project.display(currentProject);
     insertTodoEventListener();
 }
 const editTodos = function () {
